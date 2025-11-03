@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aptitude Test</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #4f46e5; /* Indigo 600 */
+        --primary-light: #6366f1; /* Indigo 500 */
+        --success-color: #059669; /* Emerald 600 (slightly darker for better contrast) */
+        --fail-color: #ef4444; /* Red 500 */
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f3f4f6; /* Light gray background */
+      }
+      /* Custom scrollbar for question area */
+      #test-view-container::-webkit-scrollbar {
+        width: 8px;
+      }
+      #test-view-container::-webkit-scrollbar-thumb {
+        background-color: var(--primary-light);
+        border-radius: 4px;
+      }
+      .radio-label {
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        border: 2px solid transparent;
+        /* Added shadow for depth */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -2px rgba(0, 0, 0, 0.06);
+      }
+      .radio-label:hover {
+        border-color: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15);
+      }
+      input[type="radio"]:checked + .radio-label {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4">
+    <!-- Main Container -->
+    <div
+      id="app-container"
+      class="w-full max-w-2xl bg-white rounded-xl shadow-2xl p-6 sm:p-10 border-t-8 border-[var(--primary-color)]"
+    >
+      <h1
+        class="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-8"
+      >
+        HTML & CSS Basic Aptitude Challenge
+      </h1>
+
+      <!-- 1. Login/Registration View -->
+      <div id="login-view" class="view">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-gray-700">
+          Start Your Assessment
+        </h2>
+        <p class="mb-6 text-gray-600">
+          Please enter your Name or Group ID to begin the 15-question aptitude
+          test.
+        </p>
+
+        <label
+          for="candidateName"
+          class="block text-sm font-medium text-gray-700 mb-2"
+          >Candidate/Group Name</label
+        >
+        <input
+          type="text"
+          id="candidateName"
+          placeholder="E.g., John Doe or Team Alpha"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] shadow-sm transition duration-150 ease-in-out"
+        />
+
+        <div id="login-error" class="text-red-500 mt-2 text-sm hidden">
+          Please enter a valid name to proceed.
+        </div>
+
+        <button
+          onclick="startTest()"
+          class="w-full mt-8 py-3 px-4 bg-[var(--primary-color)] text-white font-bold rounded-lg hover:bg-[var(--primary-light)] transition duration-200 ease-in-out shadow-lg transform hover:scale-[1.01]"
+        >
+          Begin Test
+        </button>
+      </div>
+
+      <!-- 2. Test View -->
+      <div id="test-view" class="view hidden">
+        <p class="text-sm text-gray-500 mb-4">
+          Candidate:
+          <span
+            id="candidate-display"
+            class="font-semibold text-gray-700"
+          ></span>
+        </p>
+
+        <div
+          id="test-view-container"
+          class="space-y-8 max-h-[60vh] overflow-y-auto pr-2"
+        >
+          <!-- Questions will be injected here by JavaScript -->
+        </div>
+
+        <button
+          onclick="submitTest()"
+          class="w-full mt-8 py-3 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-200 ease-in-out shadow-lg transform hover:scale-[1.01]"
+        >
+          Submit Test & View Results
+        </button>
+      </div>
+
+      <!-- 3. Result View (Final Page: Eligible or Ineligible) -->
+      <div
+        id="result-view"
+        class="view hidden text-center p-6 border border-gray-100 rounded-xl"
+      >
+        <h2 id="result-heading" class="text-3xl font-extrabold mb-4"></h2>
+
+        <p class="text-xl text-gray-600 mb-6">
+          Candidate:
+          <span
+            id="result-candidate-name"
+            class="font-bold text-gray-800"
+          ></span>
+        </p>
+
+        <p
+          id="result-message"
+          class="text-lg font-medium mb-8 p-4 rounded-lg inline-block"
+        ></p>
+
+        <div class="text-2xl font-bold text-gray-700 mb-10">
+          Final Score:
+          <span id="score-display" class="text-4xl font-extrabold ml-2"></span>
+          / 15
+        </div>
+
+        <button
+          onclick="resetApp()"
+          class="py-2 px-6 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition duration-200 ease-in-out transform hover:scale-105"
+        >
+          Start New Test
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- Configuration and Data ---
+      const PASS_THRESHOLD_PERCENTAGE = 70;
+      const questions = [
+        // HTML & CSS Basic Tags and Properties Questions (15 Total)
+        {
+          id: 1,
+          question: "What is the correct HTML tag for the largest heading?",
+          options: ["<h6>", "<head>", "<heading>", "<h1>"],
+          answer: "<h1>",
+        },
+        {
+          id: 2,
+          question:
+            "Which HTML element is used to define an internal style sheet?",
+          options: ["<script>", "<style>", "<css>", "<link>"],
+          answer: "<style>",
+        },
+        {
+          id: 3,
+          question: "Which HTML attribute is used to define inline styles?",
+          options: ["class", "styles", "font", "style"],
+          answer: "style",
+        },
+        {
+          id: 4,
+          question: "Which tag is used to create a hyperlink in HTML?",
+          options: ["<link>", "<a>", "<href>", "<hlink>"],
+          answer: "<a>",
+        },
+        {
+          id: 5,
+          question: "Which HTML tag is used to display an image?",
+          options: ["<picture>", "<image>", "<img>", "<src>"],
+          answer: "<img>",
+        },
+        {
+          id: 6,
+          question:
+            "Which HTML element is used for organizing data in rows and columns?",
+          options: ["<list>", "<table>", "<data>", "<grid>"],
+          answer: "<table>",
+        },
+        {
+          id: 7,
+          question: "What does CSS stand for?",
+          options: [
+            "Creative Style Sheets",
+            "Cascading Style Sheets",
+            "Computer Style Syntax",
+            "Colorful Style System",
+          ],
+          answer: "Cascading Style Sheets",
+        },
+        {
+          id: 8,
+          question:
+            "Which CSS property is used to change the background color of an element?",
+          options: [
+            "color-background",
+            "bg-color",
+            "background-color",
+            "bgcolor",
+          ],
+          answer: "background-color",
+        },
+        {
+          id: 9,
+          question: "Which CSS property controls the text size?",
+          options: ["text-style", "font-size", "text-height", "font-style"],
+          answer: "font-size",
+        },
+        {
+          id: 10,
+          question:
+            "Which is the correct way to select an element with the ID 'header' in CSS?",
+          options: [".header", "header", "#header", "*header"],
+          answer: "#header",
+        },
+        {
+          id: 11,
+          question: "How do you add a comment in a CSS file?",
+          options: [
+            "// comment",
+            "<!-- comment -->",
+            "/* comment */",
+            "' comment",
+          ],
+          answer: "/* comment */",
+        },
+        {
+          id: 12,
+          question: "Which tag is a self-closing (void) tag?",
+          options: ["<span>", "<p>", "<br>", "<div>"],
+          answer: "<br>",
+        },
+        {
+          id: 13,
+          question:
+            "Which CSS property is used to control the space between an element's border and its content?",
+          options: ["margin", "spacing", "padding", "border-space"],
+          answer: "padding",
+        },
+        {
+          id: 14,
+          question:
+            "The `<head>` section contains metadata about the HTML document. Which element typically follows the closing `</head>` tag?",
+          options: ["<html>", "<title>", "<meta>", "<body>"],
+          answer: "<body>",
+        },
+        {
+          id: 15,
+          question:
+            "What is the default value of the `position` property in CSS?",
+          options: ["fixed", "relative", "static", "absolute"],
+          answer: "static",
+        },
+      ];
+
+      let candidateName = "";
+      let userAnswers = {}; // To store the user's selected answers
+
+      // --- View Management ---
+
+      function showView(viewId) {
+        document.querySelectorAll(".view").forEach((view) => {
+          view.classList.add("hidden");
+        });
+        document.getElementById(viewId).classList.remove("hidden");
+      }
+
+      // --- Login Page Logic ---
+
+      function startTest() {
+        const nameInput = document.getElementById("candidateName");
+        const errorDiv = document.getElementById("login-error");
+        candidateName = nameInput.value.trim();
+
+        if (candidateName.length < 2) {
+          errorDiv.classList.remove("hidden");
+          nameInput.focus();
+          return;
+        }
+
+        errorDiv.classList.add("hidden");
+        document.getElementById("candidate-display").textContent =
+          candidateName;
+        renderQuestions();
+        showView("test-view");
+      }
+
+      // --- Test Page Logic ---
+
+      function renderQuestions() {
+        const container = document.getElementById("test-view-container");
+        container.innerHTML = ""; // Clear previous content
+
+        questions.forEach((q, index) => {
+          const questionElement = document.createElement("div");
+          questionElement.className =
+            "p-5 bg-gray-50 rounded-lg shadow-md border-l-4 border-indigo-400";
+          questionElement.innerHTML = `
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Q${
+                      index + 1
+                    }. ${q.question}</h4>
+                    <div class="space-y-3">
+                        ${q.options
+                          .map(
+                            (option) => `
+                            <div class="flex items-center">
+                                <input type="radio" id="q${
+                                  q.id
+                                }-${option.replace(
+                              /\s/g,
+                              "-"
+                            )}" name="question-${q.id}" value="${option}"
+                                       class="hidden peer" onchange="storeAnswer(${
+                                         q.id
+                                       }, '${option.replace(/'/g, "\\'")}')">
+                                <label for="q${q.id}-${option.replace(
+                              /\s/g,
+                              "-"
+                            )}"
+                                       class="radio-label w-full p-3 text-gray-700 bg-white border border-gray-200 rounded-lg block hover:bg-indigo-50 peer-checked:bg-indigo-600 peer-checked:text-white transition duration-200">
+                                    ${option}
+                                </label>
+                            </div>
+                        `
+                          )
+                          .join("")}
+                    </div>
+                `;
+          container.appendChild(questionElement);
+        });
+      }
+
+      function storeAnswer(questionId, answer) {
+        userAnswers[questionId] = answer;
+      }
+
+      function submitTest() {
+        const totalQuestions = questions.length;
+        let correctAnswers = 0;
+
+        // Simple validation: check if all questions were attempted
+        if (Object.keys(userAnswers).length !== totalQuestions) {
+          // NOTE: Using window.confirm() here as a static fallback
+          if (
+            !window.confirm(
+              `You have only answered ${
+                Object.keys(userAnswers).length
+              } out of ${totalQuestions} questions. Are you sure you want to submit?`
+            )
+          ) {
+            return;
+          }
+        }
+
+        // Calculate score
+        questions.forEach((q) => {
+          const userAnswer = userAnswers[q.id];
+          if (userAnswer === q.answer) {
+            correctAnswers++;
+          }
+        });
+
+        const scorePercentage = (correctAnswers / totalQuestions) * 100;
+
+        // Navigate to result view (the final page)
+        showResults(correctAnswers, totalQuestions, scorePercentage);
+      }
+
+      // --- Result Page Logic (Handles both eligible and ineligible) ---
+
+      function showResults(correctAnswers, totalQuestions, percentage) {
+        const isEligible = percentage >= PASS_THRESHOLD_PERCENTAGE;
+        const resultHeading = document.getElementById("result-heading");
+        const resultMessage = document.getElementById("result-message");
+        const scoreDisplay = document.getElementById("score-display");
+
+        document.getElementById("result-candidate-name").textContent =
+          candidateName;
+        scoreDisplay.textContent = correctAnswers;
+
+        if (isEligible) {
+          // Eligible/Selected message (Passes 70% threshold)
+          resultHeading.textContent = "✅ SELECTED: Outstanding Result!";
+          resultHeading.classList.remove("text-[var(--fail-color)]");
+          resultHeading.classList.add("text-[var(--success-color)]");
+
+          resultMessage.innerHTML = `
+                    <p class="font-extrabold text-xl">CONGRATULATIONS, ${candidateName.toUpperCase()}!</p>
+                    <p>Your excellent score of ${percentage.toFixed(
+                      0
+                    )}% has secured your position.</p>
+                `;
+          resultMessage.classList.remove("bg-red-100", "text-red-700");
+          resultMessage.classList.add(
+            "bg-green-100",
+            "text-green-800",
+            "border-2",
+            "border-[var(--success-color)]"
+          );
+        } else {
+          // Ineligible message (Fails 70% threshold)
+          resultHeading.textContent = "❌ Better Luck Next Time.";
+          resultHeading.classList.remove("text-[var(--success-color)]");
+          resultHeading.classList.add("text-[var(--fail-color)]");
+
+          resultMessage.innerHTML = `
+                    <p class="font-bold">Thank you for participating, ${candidateName}.</p>
+                    <p>Your score of ${percentage.toFixed(
+                      0
+                    )}% is below the ${PASS_THRESHOLD_PERCENTAGE}% requirement.</p>
+                `;
+          resultMessage.classList.remove("bg-green-100", "text-green-700");
+          resultMessage.classList.add(
+            "bg-red-100",
+            "text-red-700",
+            "border-2",
+            "border-[var(--fail-color)]"
+          );
+        }
+
+        showView("result-view");
+      }
+
+      // --- Reset Logic ---
+
+      function resetApp() {
+        candidateName = "";
+        userAnswers = {};
+        document.getElementById("candidateName").value = "";
+        showView("login-view");
+      }
+
+      // Initialize on load
+      document.addEventListener("DOMContentLoaded", () => {
+        showView("login-view");
+      });
+    </script>
+  </body>
+</html>

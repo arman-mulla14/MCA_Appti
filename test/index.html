@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Dev Aptitude Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #4f46e5; /* Indigo 600 */
+        --primary-light: #6366f1; /* Indigo 500 */
+        --success-color: #10b981; /* Emerald 500 */
+        --fail-color: #ef4444; /* Red 500 */
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f3f4f6; /* Light gray background */
+      }
+      /* Custom scrollbar for question area */
+      #test-view-container::-webkit-scrollbar {
+        width: 8px;
+      }
+      #test-view-container::-webkit-scrollbar-thumb {
+        background-color: var(--primary-light);
+        border-radius: 4px;
+      }
+      .radio-label {
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        border: 2px solid transparent;
+        /* Added shadow for depth */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -2px rgba(0, 0, 0, 0.06);
+      }
+      .radio-label:hover {
+        border-color: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15);
+      }
+      input[type="radio"]:checked + .radio-label {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4">
+    <div
+      id="app-container"
+      class="w-full max-w-2xl bg-white rounded-xl shadow-2xl p-6 sm:p-10 border-t-8 border-[var(--primary-color)]"
+    >
+      <h1
+        class="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-8"
+      >
+        Web Dev Challenge 💻
+      </h1>
+
+      <div id="login-view" class="view">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-gray-700">
+          Start Your Assessment
+        </h2>
+        <p class="mb-6 text-gray-600">
+          Please enter your Name or Group ID to begin the **15-question HTML,
+          CSS & JS test**.
+        </p>
+
+        <label
+          for="candidateName"
+          class="block text-sm font-medium text-gray-700 mb-2"
+          >Candidate/Group Name</label
+        >
+        <input
+          type="text"
+          id="candidateName"
+          placeholder="E.g., Jane Doe or Frontend Guru"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] shadow-sm transition duration-150 ease-in-out"
+        />
+
+        <div id="login-error" class="text-red-500 mt-2 text-sm hidden">
+          Please enter a valid name to proceed.
+        </div>
+
+        <button
+          onclick="startTest()"
+          class="w-full mt-8 py-3 px-4 bg-[var(--primary-color)] text-white font-bold rounded-lg hover:bg-[var(--primary-light)] transition duration-200 ease-in-out shadow-lg transform hover:scale-[1.01]"
+        >
+          Begin Test
+        </button>
+      </div>
+
+      <div id="test-view" class="view hidden">
+        <p class="text-sm text-gray-500 mb-4">
+          Candidate:
+          <span
+            id="candidate-display"
+            class="font-semibold text-gray-700"
+          ></span>
+        </p>
+
+        <div
+          id="test-view-container"
+          class="space-y-8 max-h-[60vh] overflow-y-auto pr-2"
+        ></div>
+
+        <button
+          onclick="submitTest()"
+          class="w-full mt-8 py-3 px-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-200 ease-in-out shadow-lg transform hover:scale-[1.01]"
+        >
+          Submit Test & View Results
+        </button>
+      </div>
+
+      <div id="result-view" class="view hidden text-center">
+        <h2 id="result-heading" class="text-3xl font-extrabold mb-4"></h2>
+
+        <p class="text-xl text-gray-600 mb-6">
+          Candidate:
+          <span
+            id="result-candidate-name"
+            class="font-bold text-gray-800"
+          ></span>
+        </p>
+
+        <p
+          id="result-message"
+          class="text-lg font-medium mb-8 p-4 rounded-lg inline-block"
+        ></p>
+
+        <div class="text-2xl font-bold text-gray-700 mb-10">
+          Your Score:
+          <span id="score-display" class="text-4xl font-extrabold ml-2"></span>
+          / 15
+        </div>
+
+        <button
+          onclick="resetApp()"
+          class="py-2 px-6 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition duration-200 ease-in-out transform hover:scale-105"
+        >
+          Start New Test
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- Configuration and Data ---
+      const PASS_THRESHOLD_PERCENTAGE = 70;
+      const questions = [
+        // HTML Questions
+        {
+          id: 1,
+          question:
+            "Which HTML tag is used to define the document's viewable area properties for responsive design?",
+          options: [
+            '<meta name="viewport">',
+            '<meta name="responsive">',
+            '<link rel="viewport">',
+            "<style>@media</style>",
+          ],
+          answer: '<meta name="viewport">',
+        },
+        {
+          id: 2,
+          question:
+            "In HTML5, which element is typically used to represent a self-contained content unit, like an article or a blog post?",
+          options: ["<section>", "<div>", "<article>", "<main>"],
+          answer: "<article>",
+        },
+        {
+          id: 3,
+          question:
+            "Which attribute is used in a form element to specify where to send the form-data when a form is submitted?",
+          options: ["method", "action", "submit", "enctype"],
+          answer: "action",
+        },
+        // CSS/Tailwind Questions
+        {
+          id: 4,
+          question:
+            "In Tailwind CSS, which class is used to make an element sticky?",
+          options: ["position-sticky", "top-0", "sticky", "fixed"],
+          answer: "sticky",
+        },
+        {
+          id: 5,
+          question:
+            "Which CSS property controls the spacing between lines of text?",
+          options: [
+            "word-spacing",
+            "letter-spacing",
+            "line-height",
+            "text-spacing",
+          ],
+          answer: "line-height",
+        },
+        {
+          id: 6,
+          question:
+            "What is the correct CSS pseudo-class for hovering over a link?",
+          options: [":active", ":focus", ":visited", ":hover"],
+          answer: ":hover",
+        },
+        {
+          id: 7,
+          question:
+            "In the CSS Box Model, which property is NOT considered part of the element's actual dimensions?",
+          options: ["margin", "padding", "height", "border"],
+          answer: "margin",
+        },
+        {
+          id: 8,
+          question:
+            "Which flexbox property dictates the stacking direction of flex items?",
+          options: [
+            "align-items",
+            "justify-content",
+            "flex-flow",
+            "flex-direction",
+          ],
+          answer: "flex-direction",
+        },
+        // JavaScript Questions
+        {
+          id: 9,
+          question:
+            "Which method is used to add one or more elements to the end of an array and returns the new length?",
+          options: ["splice()", "shift()", "push()", "pop()"],
+          answer: "push()",
+        },
+        {
+          id: 10,
+          question: "What will `typeof []` return in JavaScript?",
+          options: ["array", "object", "undefined", "list"],
+          answer: "object",
+        },
+        {
+          id: 11,
+          question:
+            "Which JavaScript keyword is used to declare a block-scoped variable that cannot be reassigned?",
+          options: ["var", "let", "const", "static"],
+          answer: "const",
+        },
+        {
+          id: 12,
+          question: "What is the result of '5' + 3 in JavaScript?",
+          options: ["8", "53", "NaN", "Error"],
+          answer: "53",
+        },
+        {
+          id: 13,
+          question:
+            "What is the correct way to select an element by its ID in the DOM?",
+          options: [
+            "document.query('#id')",
+            "document.getElementById('id')",
+            "document.querySelectorId('id')",
+            "document.getElementByTagName('id')",
+          ],
+          answer: "document.getElementById('id')",
+        },
+        {
+          id: 14,
+          question:
+            "Which loop is best suited for iterating over the properties of an object?",
+          options: ["for...of", "while", "do...while", "for...in"],
+          answer: "for...in",
+        },
+        {
+          id: 15,
+          question:
+            "In JavaScript, a promise that has been fulfilled with a value is in which state?",
+          options: ["Pending", "Rejected", "Settled", "Fulfilled"],
+          answer: "Fulfilled",
+        },
+      ];
+
+      let candidateName = "";
+      let userAnswers = {}; // To store the user's selected answers
+
+      // --- View Management ---
+
+      function showView(viewId) {
+        document.querySelectorAll(".view").forEach((view) => {
+          view.classList.add("hidden");
+        });
+        document.getElementById(viewId).classList.remove("hidden");
+      }
+
+      // --- Login Page Logic ---
+
+      function startTest() {
+        const nameInput = document.getElementById("candidateName");
+        const errorDiv = document.getElementById("login-error");
+        candidateName = nameInput.value.trim();
+
+        if (candidateName.length < 2) {
+          errorDiv.classList.remove("hidden");
+          nameInput.focus();
+          return;
+        }
+
+        errorDiv.classList.add("hidden");
+        document.getElementById("candidate-display").textContent =
+          candidateName;
+        renderQuestions();
+        showView("test-view");
+      }
+
+      // --- Test Page Logic ---
+
+      function renderQuestions() {
+        const container = document.getElementById("test-view-container");
+        container.innerHTML = ""; // Clear previous content
+
+        questions.forEach((q, index) => {
+          const questionElement = document.createElement("div");
+          questionElement.className =
+            "p-5 bg-gray-50 rounded-lg shadow-md border-l-4 border-indigo-400";
+          questionElement.innerHTML = `
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Q${
+                      index + 1
+                    }. ${q.question}</h4>
+                    <div class="space-y-3">
+                        ${q.options
+                          .map((option) => {
+                            // Escape single quotes for use in the storeAnswer function call
+                            const escapedOption = option.replace(/'/g, "\\'");
+                            // Use a clean ID for the radio button
+                            const radioId = `q${q.id}-${option
+                              .replace(/[^a-zA-Z0-9]/g, "-")
+                              .toLowerCase()}`;
+
+                            return `
+                                <div class="flex items-center">
+                                    <input type="radio" id="${radioId}" name="question-${q.id}" value="${option}"
+                                            class="hidden peer" onchange="storeAnswer(${q.id}, '${escapedOption}')">
+                                    <label for="${radioId}"
+                                            class="radio-label w-full p-3 text-gray-700 bg-white border border-gray-200 rounded-lg block hover:bg-indigo-50 peer-checked:bg-indigo-600 peer-checked:text-white transition duration-200">
+                                        ${option}
+                                    </label>
+                                </div>
+                            `;
+                          })
+                          .join("")}
+                    </div>
+                `;
+          container.appendChild(questionElement);
+        });
+      }
+
+      function storeAnswer(questionId, answer) {
+        userAnswers[questionId] = answer;
+      }
+
+      function submitTest() {
+        const totalQuestions = questions.length;
+        let correctAnswers = 0;
+
+        // Simple validation: check if all questions were attempted
+        if (Object.keys(userAnswers).length !== totalQuestions) {
+          // Instead of alert, use a better message box/modal in a real app
+          if (
+            !window.confirm(
+              `You have only answered ${
+                Object.keys(userAnswers).length
+              } out of ${totalQuestions} questions. Are you sure you want to submit?`
+            )
+          ) {
+            return;
+          }
+        }
+
+        // Calculate score
+        questions.forEach((q) => {
+          // Ensure we compare the actual stored answer from the DOM change (which might have been escaped)
+          // with the answer in the questions array.
+          const userAnswer = userAnswers[q.id];
+          if (userAnswer === q.answer) {
+            correctAnswers++;
+          }
+        });
+
+        const scorePercentage = (correctAnswers / totalQuestions) * 100;
+
+        // Navigate to result view
+        showResults(correctAnswers, totalQuestions, scorePercentage);
+      }
+
+      // --- Result Page Logic ---
+
+      function showResults(correctAnswers, totalQuestions, percentage) {
+        const isEligible = percentage >= PASS_THRESHOLD_PERCENTAGE;
+        const resultHeading = document.getElementById("result-heading");
+        const resultMessage = document.getElementById("result-message");
+        const scoreDisplay = document.getElementById("score-display");
+
+        document.getElementById("result-candidate-name").textContent =
+          candidateName;
+        scoreDisplay.textContent = correctAnswers;
+
+        if (isEligible) {
+          // Success/Eligible Message (More than 70%)
+          resultHeading.textContent = "🎉 Congratulations, You Passed!";
+          resultHeading.classList.remove("text-[var(--fail-color)]");
+          resultHeading.classList.add("text-[var(--success-color)]");
+
+          resultMessage.innerHTML = `
+                    <p class="font-bold">Excellent performance, ${candidateName}!</p>
+                    <p>Your score of ${percentage.toFixed(
+                      0
+                    )}% meets the selection criteria.</p>
+                `;
+          resultMessage.classList.remove("bg-red-100", "text-red-700");
+          resultMessage.classList.add("bg-green-100", "text-green-700");
+        } else {
+          // Fail/Ineligible Message (Less than 70%)
+          resultHeading.textContent = "Keep Coding!";
+          resultHeading.classList.remove("text-[var(--success-color)]");
+          resultHeading.classList.add("text-[var(--fail-color)]");
+
+          resultMessage.innerHTML = `
+                    <p class="font-bold">Thank you for participating, ${candidateName}.</p>
+                    <p>Your score of ${percentage.toFixed(
+                      0
+                    )}% is below the ${PASS_THRESHOLD_PERCENTAGE}% requirement. Time to review!</p>
+                `;
+          resultMessage.classList.remove("bg-green-100", "text-green-700");
+          resultMessage.classList.add("bg-red-100", "text-red-700");
+        }
+
+        showView("result-view");
+      }
+
+      // --- Reset Logic ---
+
+      function resetApp() {
+        candidateName = "";
+        userAnswers = {};
+        document.getElementById("candidateName").value = "";
+        showView("login-view");
+      }
+
+      // Initialize on load
+      document.addEventListener("DOMContentLoaded", () => {
+        showView("login-view");
+      });
+    </script>
+  </body>
+</html>
