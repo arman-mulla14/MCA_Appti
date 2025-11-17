@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Web Dev Aptitude Test</title>
+    <title>MCA-Websoftera Aptitude Test</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
@@ -148,134 +148,170 @@
     <script>
       // --- Configuration and Data ---
       const PASS_THRESHOLD_PERCENTAGE = 70;
-      const questions = [
-        // HTML Questions
-        {
-          id: 1,
-          question:
-            "Which HTML tag is used to define the document's viewable area properties for responsive design?",
-          options: [
-            '<meta name="viewport">',
-            '<meta name="responsive">',
-            '<link rel="viewport">',
-            "<style>@media</style>",
-          ],
-          answer: '<meta name="viewport">',
-        },
-        {
-          id: 2,
-          question:
-            "In HTML5, which element is typically used to represent a self-contained content unit, like an article or a blog post?",
-          options: ["<section>", "<div>", "<article>", "<main>"],
-          answer: "<article>",
-        },
-        {
-          id: 3,
-          question:
-            "Which attribute is used in a form element to specify where to send the form-data when a form is submitted?",
-          options: ["method", "action", "submit", "enctype"],
-          answer: "action",
-        },
-        // CSS/Tailwind Questions
-        {
-          id: 4,
-          question:
-            "In Tailwind CSS, which class is used to make an element sticky?",
-          options: ["position-sticky", "top-0", "sticky", "fixed"],
-          answer: "sticky",
-        },
-        {
-          id: 5,
-          question:
-            "Which CSS property controls the spacing between lines of text?",
-          options: [
-            "word-spacing",
-            "letter-spacing",
-            "line-height",
-            "text-spacing",
-          ],
-          answer: "line-height",
-        },
-        {
-          id: 6,
-          question:
-            "What is the correct CSS pseudo-class for hovering over a link?",
-          options: [":active", ":focus", ":visited", ":hover"],
-          answer: ":hover",
-        },
-        {
-          id: 7,
-          question:
-            "In the CSS Box Model, which property is NOT considered part of the element's actual dimensions?",
-          options: ["margin", "padding", "height", "border"],
-          answer: "margin",
-        },
-        {
-          id: 8,
-          question:
-            "Which flexbox property dictates the stacking direction of flex items?",
-          options: [
-            "align-items",
-            "justify-content",
-            "flex-flow",
-            "flex-direction",
-          ],
-          answer: "flex-direction",
-        },
-        // JavaScript Questions
-        {
-          id: 9,
-          question:
-            "Which method is used to add one or more elements to the end of an array and returns the new length?",
-          options: ["splice()", "shift()", "push()", "pop()"],
-          answer: "push()",
-        },
-        {
-          id: 10,
-          question: "What will `typeof []` return in JavaScript?",
-          options: ["array", "object", "undefined", "list"],
-          answer: "object",
-        },
-        {
-          id: 11,
-          question:
-            "Which JavaScript keyword is used to declare a block-scoped variable that cannot be reassigned?",
-          options: ["var", "let", "const", "static"],
-          answer: "const",
-        },
-        {
-          id: 12,
-          question: "What is the result of '5' + 3 in JavaScript?",
-          options: ["8", "53", "NaN", "Error"],
-          answer: "53",
-        },
-        {
-          id: 13,
-          question:
-            "What is the correct way to select an element by its ID in the DOM?",
-          options: [
-            "document.query('#id')",
-            "document.getElementById('id')",
-            "document.querySelectorId('id')",
-            "document.getElementByTagName('id')",
-          ],
-          answer: "document.getElementById('id')",
-        },
-        {
-          id: 14,
-          question:
-            "Which loop is best suited for iterating over the properties of an object?",
-          options: ["for...of", "while", "do...while", "for...in"],
-          answer: "for...in",
-        },
-        {
-          id: 15,
-          question:
-            "In JavaScript, a promise that has been fulfilled with a value is in which state?",
-          options: ["Pending", "Rejected", "Settled", "Fulfilled"],
-          answer: "Fulfilled",
-        },
-      ];
+     const questions = [
+  {
+    id: 1,
+    question: "Which of the following is the correct HTML element for the largest heading?",
+    options: ["<h1>", "<h6>", "<heading>", "<head>"],
+    answer: "<h1>",
+  },
+  {
+    id: 2,
+    question: "What does CSS stand for?",
+    options: [
+      "Creative Style Sheets",
+      "Colorful Style Sheets",
+      "Cascading Style Sheets",
+      "Computer Style Sheets",
+    ],
+    answer: "Cascading Style Sheets",
+  },
+  {
+    id: 3,
+    question: "Which of the following is the correct way to select an element with the id logo in CSS?",
+    options: ["#logo", ".logo", "logo", "*logo"],
+    answer: "#logo",
+  },
+  {
+    id: 4,
+    question: "Which of the following is a valid way to declare an array in JavaScript?",
+    options: [
+      "let arr = [1,2,3];",
+      "int arr = [1,2,3];",
+      "array arr = (1,2,3);",
+      "var arr = int[3];",
+    ],
+    answer: "let arr = [1,2,3];",
+  },
+  {
+    id: 5,
+    question: "What does HTML stand for?",
+    options: [
+      "Hyper text markup language",
+      "Hyper transfer markup language",
+      "High tech modern language",
+      "Hyperlink test management language",
+    ],
+    answer: "Hyper text markup language",
+  },
+  {
+    id: 6,
+    question: "How do you create a comment in HTML?",
+    options: ["<!-- comment -->", "#comment", "//comment", "/*comment */"],
+    answer: "<!-- comment -->",
+  },
+  {
+    id: 7,
+    question: "Which symbol is used for single-line comments in JavaScript?",
+    options: ["<!-- comment -->", "#comment", "// comment", "/* comment */"],
+    answer: "// comment",
+  },
+  {
+    id: 8,
+    question: "Which of the following is NOT a JavaScript data type?",
+    options: ["number", "string", "boolean", "character"],
+    answer: "character",
+  },
+  {
+    id: 9,
+    question: "What is the purpose of the <table> tag in HTML?",
+    options: ["to create a table", "to create a form", "to create a link", "to create an image"],
+    answer: "to create a table",
+  },
+  {
+    id: 10,
+    question: "What is the purpose of the margin property in CSS?",
+    options: [
+      "To add space between elements",
+      "To add space within an element",
+      "To change the font size",
+      "To change the background colour",
+    ],
+    answer: "To add space between elements",
+  },
+{
+  id: 11,
+  question: "What should be the first tag in any HTML document?",
+  options: ["<!DOCTYPE html>", "<head>", "<title>", "<html>"],
+  answer: "<!DOCTYPE html>",
+},
+
+  {
+    id: 12,
+    question: "How can you create an email link?",
+    options: [
+      '<a href="mailto:xxx@yyy">',
+      '<a href="xxx@yyy">',
+      "<mail>xxx@yyy",
+      '<mail href="xxx@yyy">',
+    ],
+    answer: '<a href="mailto:xxx@yyy">',
+  },
+  {
+    id: 13,
+    question: "Which component is used to compile, debug, and execute Java programs?",
+    options: ["JRE", "JIT", "JDK", "JVM"],
+    answer: "JDK",
+  },
+  {
+    id: 14,
+    question: "Which keyword is used to explicitly throw an exception in Java?",
+    options: ["catch", "finally", "throw", "throws"],
+    answer: "throw",
+  },
+  {
+    id: 15,
+    question: "Java is considered a platform-independent language because of which principle?",
+    options: [
+      "Code dependent",
+      "Compile once, run everywhere",
+      "Sequence dependent",
+      "Platform dependent",
+    ],
+    answer: "Compile once, run everywhere",
+  },
+  {
+    id: 16,
+    question: "Which of the following is the correct HTML5 doctype declaration?",
+    options: [
+      "<!DOCTYPE html>",
+      '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">',
+      "<!DOCTYPE h5>",
+      "<DOCTYPE html>",
+    ],
+    answer: "<!DOCTYPE html>",
+  },
+  {
+    id: 17,
+    question: "What is the correct CSS syntax for making all <h1> elements red?",
+    options: [
+      "h1 { color: red; }",
+      "h1 { text-color: red; }",
+      "h1 { background-color: red; }",
+      "h1 { font-color: red; }",
+    ],
+    answer: "h1 { color: red; }",
+  },
+  {
+    id: 18,
+    question: "Which CSS property is used to control the text size?",
+    options: ["font-weight", "font-family", "font-size", "text-size"],
+    answer: "font-size",
+  },
+  {
+    id: 19,
+    question: "Which tag is used to create a line break in HTML?",
+    options: ["<lb>", "<break>", "<br>", "<newline>"],
+    answer: "<br>",
+  },
+  {
+    id: 20,
+    question: "What is the correct HTML element to display an image?",
+    options: ["<img>", "<image>", "<picture>", "<src>"],
+    answer: "<img>",
+  },
+];
+
 
       let candidateName = "";
       let userAnswers = {}; // To store the user's selected answers
